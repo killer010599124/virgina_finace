@@ -47,33 +47,124 @@ app.get("/getData", (req, res) => {
   let query = `SELECT * FROM ${tablename} WHERE `;
   const conditions = [];
 
-  if (name) {
-    conditions.push(`FirstName = '${name}'`);
+  if(tablename === "ScheduleA" || tablename === "ScheduleB"){
+    if (name) {
+      conditions.push(`FirstName = '${name}'`);
+    }
+  
+    if (org) {
+      conditions.push(`LastOrCompanyName = '${org}'`);
+    }
+  
+    if (amountFrom && amountTo) {
+      conditions.push(`Amount BETWEEN ${amountFrom} AND ${amountTo}`);
+    }
+    if (dateFrom && dateTo) {
+      const escapedDateFrom = formatDateForDatabase(dateFrom);
+      const escapedDateTo = formatDateForDatabase(dateTo);
+      conditions.push(
+        `STR_TO_DATE(TransactionDate, '%d/%m/%Y') >= STR_TO_DATE('${escapedDateFrom}', '%Y/%m/%d') AND STR_TO_DATE(TransactionDate, '%d/%m/%Y') <= STR_TO_DATE('${escapedDateTo}', '%Y/%m/%d')`
+      );
+    }
+    if (city) {
+      conditions.push(`PrimaryCityAndStateOfEmploymentOrBusiness = '${city}'`);
+    }
+  
+    if (zip) {
+      conditions.push(`ZipCode = '${zip}'`);
+    }
+  
+    query += conditions.join(" AND ");
+  }
+  else if(tablename === "ScheduleC" || tablename === "ScheduleD" || tablename === "ScheduleF" || tablename === "ScheduleI"){
+    if (name) {
+      conditions.push(`FirstName = '${name}'`);
+    }
+  
+    if (org) {
+      conditions.push(`LastOrCompanyName = '${org}'`);
+    }
+  
+    if (amountFrom && amountTo) {
+      conditions.push(`Amount BETWEEN ${amountFrom} AND ${amountTo}`);
+    }
+    if (dateFrom && dateTo) {
+      const escapedDateFrom = formatDateForDatabase(dateFrom);
+      const escapedDateTo = formatDateForDatabase(dateTo);
+      conditions.push(
+        `STR_TO_DATE(TransactionDate, '%d/%m/%Y') >= STR_TO_DATE('${escapedDateFrom}', '%Y/%m/%d') AND STR_TO_DATE(TransactionDate, '%d/%m/%Y') <= STR_TO_DATE('${escapedDateTo}', '%Y/%m/%d')`
+      );
+    }
+  
+    if (zip) {
+      conditions.push(`ZipCode = '${zip}'`);
+    }
+  
+    query += conditions.join(" AND ");
+  }
+  else if(tablename === "ScheduleE"){
+    if (name) {
+      conditions.push(`LenderFirstName = '${name}'`);
+    }
+  
+    if (org) {
+      conditions.push(`LenderLastOrCompanyName = '${org}'`);
+    }
+  
+    if (amountFrom && amountTo) {
+      conditions.push(`Amount BETWEEN ${amountFrom} AND ${amountTo}`);
+    }
+    if (dateFrom && dateTo) {
+      const escapedDateFrom = formatDateForDatabase(dateFrom);
+      const escapedDateTo = formatDateForDatabase(dateTo);
+      conditions.push(
+        `STR_TO_DATE(TransactionDate, '%d/%m/%Y') >= STR_TO_DATE('${escapedDateFrom}', '%Y/%m/%d') AND STR_TO_DATE(TransactionDate, '%d/%m/%Y') <= STR_TO_DATE('${escapedDateTo}', '%Y/%m/%d')`
+      );
+    }
+  
+    if (zip) {
+      conditions.push(`LenderZipCode = '${zip}'`);
+    }
+  
+    query += conditions.join(" AND ");
+  }
+  else if(tablename === "ScheduleG"){
+   
+    if (name && org) {
+      conditions.push(`ScheduleATotal BETWEEN ${name} AND ${org}`);
+    }
+    if (amountFrom && amountTo) {
+      conditions.push(`ScheduleBTotal BETWEEN ${amountFrom} AND ${amountTo}`);
+    }
+    if (dateFrom && dateTo) {
+      conditions.push(`ScheduleCTotal BETWEEN ${dateFrom} AND ${dateTo}`);
+    }
+    if (zip && city) {
+      conditions.push(`ScheduleDTotal BETWEEN ${zip} AND ${city}`);
+    }
+   
+  
+    query += conditions.join(" AND ");
+  }
+  else if(tablename === "ScheduleH"){
+   
+    if (name && org) {
+      conditions.push(`BeginningBalance BETWEEN ${name} AND ${org}`);
+    }
+    if (amountFrom && amountTo) {
+      conditions.push(`ExpendableFundsBalance BETWEEN ${amountFrom} AND ${amountTo}`);
+    }
+    if (dateFrom && dateTo) {
+      conditions.push(`TotalFundsAvailable BETWEEN ${dateFrom} AND ${dateTo}`);
+    }
+    if (zip && city) {
+      conditions.push(`	EndingBalance BETWEEN ${zip} AND ${city}`);
+    }
+   
+  
+    query += conditions.join(" AND ");
   }
 
-  if (org) {
-    conditions.push(`LastOrCompanyName = '${org}'`);
-  }
-
-  if (amountFrom && amountTo) {
-    conditions.push(`Amount BETWEEN ${amountFrom} AND ${amountTo}`);
-  }
-  if (dateFrom && dateTo) {
-    const escapedDateFrom = formatDateForDatabase(dateFrom);
-    const escapedDateTo = formatDateForDatabase(dateTo);
-    conditions.push(
-      `STR_TO_DATE(TransactionDate, '%d/%m/%Y') >= STR_TO_DATE('${escapedDateFrom}', '%Y/%m/%d') AND STR_TO_DATE(TransactionDate, '%d/%m/%Y') <= STR_TO_DATE('${escapedDateTo}', '%Y/%m/%d')`
-    );
-  }
-  if (city) {
-    conditions.push(`PrimaryCityAndStateOfEmploymentOrBusiness = '${city}'`);
-  }
-
-  if (zip) {
-    conditions.push(`ZipCode = '${zip}'`);
-  }
-
-  query += conditions.join(" AND ");
 
   log(query);
 
